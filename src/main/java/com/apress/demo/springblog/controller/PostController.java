@@ -1,16 +1,15 @@
 package com.apress.demo.springblog.controller;
 
 import com.apress.demo.springblog.domain.Post;
+import com.apress.demo.springblog.exception.SpringBlogException;
 import com.apress.demo.springblog.service.PostService;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.Errors;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.ModelAttribute;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.*;
+import org.springframework.web.servlet.ModelAndView;
 
 import java.util.Arrays;
 
@@ -32,6 +31,12 @@ public class PostController {
         return "addPost";
     }
 
+    @GetMapping("/{id}")
+    public String onePostPage(Model model, @PathVariable Integer id) {
+        model.addAttribute("posts", postService.findOnePost(id));
+        return "onePost";
+    }
+
     @PostMapping
     public String addPost(@ModelAttribute("post") @Valid Post post, Errors errors) {
         if (errors.hasErrors()) {
@@ -39,5 +44,12 @@ public class PostController {
         }
         postService.addPost(post);
         return "redirect:/posts";
+    }
+
+    @ExceptionHandler(SpringBlogException.class)
+    public ModelAndView handleSpringBlogException(SpringBlogException ex) {
+        ModelAndView model = new ModelAndView("error");
+        model.addObject("exception", ex);
+        return model;
     }
 }

@@ -20,6 +20,10 @@ public class PostService {
         return postRepository.findAllPosts();
     }
 
+    public Post findOnePost(Integer id) {
+        return postRepository.findOnePost(id);
+    }
+
     public boolean postExistsWithTitle(String title) {
         return postRepository.findAllPosts().stream()
                 .anyMatch(post -> post.getTitle().equals(title));
